@@ -9,6 +9,7 @@ period?
 stress?
 4. Does heat stress severity vary significantly across different cities, and can perceived
 temperature better explain these differences than air temperature alone
+
 Research Hypotheses
 1. Higher Humidity levels significantly increase perceived heat stress even when actual air
 temperature remains constant.
@@ -17,6 +18,7 @@ humidity conditions.
 3. Perceived temperature is a better indicator of climate extremes than air temperature
 alone.
 4. Heat stress severity differs significantly across cities due to varying climate action.
+   
 Objectives
 1. To compare actual temperature and perceived temperature during extreme heat events
 2. To examine the effect of humidity on heat stress intensity
