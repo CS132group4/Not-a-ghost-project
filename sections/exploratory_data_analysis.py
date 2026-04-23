@@ -7,13 +7,21 @@ from scipy.stats import shapiro, spearmanr, wilcoxon, kruskal
 
 def main():
 
-    st.set_page_config(page_title="Exploratory Data Analysis")
-
-    st.sidebar.header("Exploratory Data Analysis")
-
-    st.title("Exploratory Data Analysis")
+    st.markdown("""
+    <div style="
+        background-image: linear-gradient(135deg, #BA7517 0%, #D85A30 50%, #993C1D 100%);
+        padding: 3px;
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 2rem;
+    ">
+                <h1 style="font-size: 42px; color: white; margin-bottom: 0.5rem;"> Data Exploration</h1>
+    </div>
+    """, unsafe_allow_html=True)
 
     df = load_data()
+
+    st.markdown("## Exploratory Data Analysis")
 
     st.markdown("### Summary Statistics")
     st.dataframe(df.describe())
@@ -23,7 +31,7 @@ def main():
 
     st.markdown("### Understanding Distributions")
     df_num = ['main.temp','main.humidity','main.feels_like']
-    st.markdown("#### Numerical Feature Summary:")
+    st.markdown("#### Numerical Feature Summary")
     st.write(df[df_num].describe())
 
     st.markdown("### Pairplot")
@@ -66,44 +74,53 @@ def main():
         st.write("Result:", "Approximately Normal" if p_value > 0.05 else "Not Normal")
         
     st.markdown("### Data Visualization")
-    st.markdown("#### RQ1: Actual vs Perceived Temperature")
-    fig, ax = plt.subplots()
-    sns.scatterplot(data=df, x='main.temp', y='main.feels_like', alpha=0.5, ax=ax)
-    plt.plot([15,40],[15,40], linestyle='--')
-    plt.title("Actual vs Perceived Temperature")
-    plt.xlabel("Actual Temperature")
-    plt.ylabel("Feels Like Temperature")
-    st.pyplot(fig)
 
-    st.markdown("#### RQ2: Frequency of Extreme Heat Events")
-    fig, ax = plt.subplots()
-    sns.countplot(data=df[df['extreme_heat']], x='hour')
-    plt.title("Frequency of Extreme Heat Events")
-    plt.xlabel("Hour")
-    plt.ylabel("Count")
-    st.pyplot(fig)
+    col1, col2 = st.columns(2)
 
-    st.markdown("#### RQ3: Temperature and Humidity vs Heat Stress")
-    fig, ax = plt.subplots()
-    sns.scatterplot(
-        data=df,
-        x='main.temp',
-        y='main.humidity',
-        hue='main.feels_like'
-    )
-    plt.title("Temperature and Humidity vs Heat Stress")
-    st.pyplot(fig)
+    with col1:
+        st.markdown("#### RQ1: Actual vs Perceived Temperature")
+        fig, ax = plt.subplots(figsize=(6, 3))
+        sns.scatterplot(data=df, x='main.temp', y='main.feels_like', alpha=0.5, ax=ax)
+        plt.plot([15,40],[15,40], linestyle='--')
+        plt.title("Actual vs Perceived Temperature")
+        plt.xlabel("Actual Temperature")
+        plt.ylabel("Feels Like Temperature")
+        st.pyplot(fig)
 
-    st.markdown("#### RQ4: Heat Stress Across Cities")
-    fig, ax = plt.subplots(figsize=(12,6))
-    sns.boxplot(data=df, x='city_name', y='main.feels_like')
-    plt.xticks(rotation=90)
-    plt.title("Heat Stress Across Cities")
+    with col2:
+        st.markdown("#### RQ2: Frequency of Extreme Heat Events")
+        fig, ax = plt.subplots(figsize=(6, 3))
+        sns.countplot(data=df[df['extreme_heat']], x='hour', ax=ax)
+        plt.title("Frequency of Extreme Heat Events")
+        plt.xlabel("Hour")
+        plt.ylabel("Count")
+        st.pyplot(fig)
 
-    st.pyplot(fig)
+    col3, col4 = st.columns(2)
 
+    with col3:
+        st.markdown("#### RQ3: Temperature and Humidity vs Heat Stress")
+        fig, ax = plt.subplots(figsize=(6, 3))
+        sns.scatterplot(
+            data=df,
+            x='main.temp',
+            y='main.humidity',
+            hue='main.feels_like',
+            ax=ax
+        )
+        plt.title("Temperature and Humidity vs Heat Stress")
+        st.pyplot(fig)
+
+    with col4:
+        st.markdown("#### RQ4: Heat Stress Across Cities")
+        fig, ax = plt.subplots(figsize=(6, 3))
+        sns.boxplot(data=df, x='city_name', y='main.feels_like', ax=ax)
+        plt.xticks(rotation=90)
+        plt.title("Heat Stress Across Cities")
+        st.pyplot(fig)
+        
     st.markdown("#### Nutshell Plot")
-    fig, ax = plt.subplots(figsize=(12,8))
+    fig, ax = plt.subplots(figsize=(10,8))
 
     # Base scatter (soft background)
     sns.scatterplot(
