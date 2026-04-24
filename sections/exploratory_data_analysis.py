@@ -77,7 +77,7 @@ def main():
 
     col1, col2 = st.columns(2)
 
-        with col1:
+    with col1:
         st.markdown("#### RQ1: Actual vs Perceived Temperature")
         fig, ax = plt.subplots(figsize=(6, 3))
         sns.scatterplot(data=df, x='main.temp', y='main.feels_like', alpha=0.5, ax=ax)
@@ -98,7 +98,7 @@ def main():
         especially during warmer conditions. Several observations cluster between 30°C and 40°C feels-like 
         temperature even when actual temperatures are lower, indicating amplified heat stress. The visualization 
         demonstrates that actual temperature alone may underestimate how hot environmental conditions truly feel.
-        """)
+    """)
 
     with col2:
         st.markdown("#### RQ2: Frequency of Extreme Heat Events")
@@ -168,7 +168,7 @@ def main():
         
     st.markdown("#### Nutshell Plot")
     fig, ax = plt.subplots(figsize=(10,8))
-        st.markdown("""
+    st.markdown("""
     The nutshell plot summarizes the study’s main findings by comparing actual temperature and perceived 
     temperature under normal and extreme heat conditions. The diagonal dashed line represents situations where 
     feels-like temperature is equal to actual temperature, while the shaded orange region illustrates how 
@@ -278,7 +278,7 @@ def main():
     st.pyplot(fig)
 
     st.markdown("### Hypothesis Testing")
-        st.markdown("#### Hypothesis 1: Humidity increases heat stress")
+    st.markdown("#### Hypothesis 1: Humidity increases heat stress")
     with st.echo():
         corr, p = spearmanr(df['main.humidity'], df['main.feels_like'])
     st.write(f"Correlation: {corr:.4f}, p-value: {p: .4f}")
