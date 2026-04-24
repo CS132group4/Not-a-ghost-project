@@ -30,6 +30,22 @@ html, body {{
     font-family: 'Inter', sans-serif;
 }}
             
+[data-testid="stAppViewContainer"] {{
+    background-color: #000000 !important;
+}}
+
+section.main {{
+    background-color: #000000 !important;
+}}
+
+div.block-container {{
+    background-color: #000000 !important;
+}}
+
+html, body, p, h1, h2, h3, h4, h5, h6 {{
+    color: white !important;
+}}
+            
 /* header  */
 .main {{
     position: relative;
@@ -94,7 +110,7 @@ button[aria-selected="true"] {{
     border-radius: 8px 8px 0 0 !important;
 }}
 
-/* ===== TEXT ===== */
+/* text */
 h1 {{font-size: 40px !important;}}
 h2 {{font-size: 30px !important;}}
 h3 {{font-size: 24px !important;}}
@@ -104,6 +120,16 @@ h6 {{font-size: 16px !important;}}
 
 header[data-testid="stHeader"] {{
     display: none;
+}}
+
+/* Fix markdown specifically */
+.stMarkdown, .stMarkdown p {{
+    color: white !important;
+}}
+
+/* Optional: make secondary text less gray */
+[data-testid="stCaption"] {{
+    color: #cccccc !important;
 }}
 
 </style>
