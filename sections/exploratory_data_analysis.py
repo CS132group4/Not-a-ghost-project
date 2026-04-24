@@ -77,7 +77,7 @@ def main():
 
     col1, col2 = st.columns(2)
 
-    with col1:
+        with col1:
         st.markdown("#### RQ1: Actual vs Perceived Temperature")
         fig, ax = plt.subplots(figsize=(6, 3))
         sns.scatterplot(data=df, x='main.temp', y='main.feels_like', alpha=0.5, ax=ax)
@@ -87,6 +87,19 @@ def main():
         plt.ylabel("Feels Like Temperature")
         st.pyplot(fig)
 
+        st.markdown("""
+        The scatter plot shows a strong positive relationship between actual temperature and perceived 
+        (“feels like”) temperature. At lower temperatures, the points closely follow the diagonal line, 
+        indicating that perceived temperature is nearly equal to actual temperature. However, as temperatures 
+        increase, the points begin spreading upward, showing that the feels-like temperature becomes higher 
+        than the actual air temperature.
+
+        This widening gap suggests that atmospheric factors such as humidity intensify human heat perception, 
+        especially during warmer conditions. Several observations cluster between 30°C and 40°C feels-like 
+        temperature even when actual temperatures are lower, indicating amplified heat stress. The visualization 
+        demonstrates that actual temperature alone may underestimate how hot environmental conditions truly feel.
+        """)
+
     with col2:
         st.markdown("#### RQ2: Frequency of Extreme Heat Events")
         fig, ax = plt.subplots(figsize=(6, 3))
@@ -95,6 +108,17 @@ def main():
         plt.xlabel("Hour")
         plt.ylabel("Count")
         st.pyplot(fig)
+
+        st.markdown("""
+        The histogram reveals that extreme heat events are concentrated during midday and early afternoon hours. 
+        Event frequencies remain relatively low during the morning but increase sharply around 11 AM, peaking 
+        between 1 PM and 3 PM. After late afternoon, the number of extreme heat events declines steadily.
+
+        This pattern reflects the natural daily heating cycle where solar radiation accumulates throughout the 
+        day, causing temperatures and humidity-driven heat stress to intensify. The results suggest that the 
+        highest risk period for dangerous heat conditions occurs during midday hours, aligning with common heat 
+        advisory periods issued by weather agencies.
+        """)
 
     col3, col4 = st.columns(2)
 
@@ -111,6 +135,18 @@ def main():
         plt.title("Temperature and Humidity vs Heat Stress")
         st.pyplot(fig)
 
+        st.markdown("""
+        The scatter plot demonstrates how humidity interacts with temperature to influence perceived heat stress. 
+        Darker colored points, representing higher feels-like temperatures, are concentrated in regions where both 
+        temperature and humidity are elevated.
+
+        Even moderate temperatures can produce dangerous heat stress when humidity levels are high because humidity 
+        reduces the body’s ability to cool itself through sweat evaporation. The clustering of high heat stress 
+        points around temperatures above 28°C and humidity levels between 60% and 90% highlights the combined 
+        effect of these variables. The visualization confirms that humidity significantly amplifies how hot 
+        conditions feel to humans.
+        """)
+
     with col4:
         st.markdown("#### RQ4: Heat Stress Across Cities")
         fig, ax = plt.subplots(figsize=(6, 3))
@@ -118,9 +154,34 @@ def main():
         plt.xticks(rotation=90)
         plt.title("Heat Stress Across Cities")
         st.pyplot(fig)
+
+        st.markdown("""
+        The boxplot compares perceived temperatures across different cities and shows clear variations in heat 
+        stress levels. Some cities exhibit higher median feels-like temperatures, while others display wider 
+        distributions and more extreme outliers.
+
+        These differences suggest that local environmental and climatic conditions influence heat stress severity. 
+        Cities with larger spreads and higher outliers experience more frequent or more severe heat conditions, 
+        whereas cities with narrower distributions exhibit relatively stable heat patterns. The visualization 
+        demonstrates that heat stress is not geographically uniform and varies significantly across locations.
+        """)
         
     st.markdown("#### Nutshell Plot")
     fig, ax = plt.subplots(figsize=(10,8))
+        st.markdown("""
+    The nutshell plot summarizes the study’s main findings by comparing actual temperature and perceived 
+    temperature under normal and extreme heat conditions. The diagonal dashed line represents situations where 
+    feels-like temperature is equal to actual temperature, while the shaded orange region illustrates how 
+    humidity pushes perceived temperature above measured air temperature.
+
+    Red points highlight extreme heat events, showing that dangerous heat conditions occur when feels-like 
+    temperatures rise significantly beyond actual temperatures. The horizontal threshold line marks the critical 
+    extreme heat boundary, while the highlighted peak point represents the most severe heat stress observation 
+    in the dataset.
+
+    Overall, the visualization emphasizes that humidity amplifies heat stress, making perceived temperature a 
+    more meaningful indicator of dangerous climate conditions than actual temperature alone.
+    """)
 
     # Base scatter (soft background)
     sns.scatterplot(
@@ -217,29 +278,74 @@ def main():
     st.pyplot(fig)
 
     st.markdown("### Hypothesis Testing")
-    st.markdown("#### Hypothesis 1: Humidity increases heat stress")
+        st.markdown("#### Hypothesis 1: Humidity increases heat stress")
     with st.echo():
         corr, p = spearmanr(df['main.humidity'], df['main.feels_like'])
     st.write(f"Correlation: {corr:.4f}, p-value: {p: .4f}")
+
+    st.markdown(f"""
+    The Spearman correlation coefficient of {corr:.4f} indicates a strong positive relationship between 
+    humidity and perceived temperature. As humidity increases, the feels-like temperature also tends to increase. 
+    The extremely small p-value confirms that this relationship is statistically significant and unlikely to 
+    have occurred by chance.
+
+    **Conclusion:** The hypothesis is supported. Humidity significantly increases heat stress.
+    """)
+
     st.markdown("#### Hypothesis 2: Feels like temperature is greater than the actual temprearure")
     with st.echo():
         stat, p = wilcoxon(df['main.feels_like'], df['main.temp'])
     st.write(f"p-value: {p: .4f}")
+
+    st.markdown(f"""
+    The Wilcoxon signed-rank test compares actual temperature and perceived temperature measurements. 
+    The near-zero p-value indicates a statistically significant difference between the two variables, 
+    with feels-like temperatures generally being higher than actual temperatures.
+
+    **Conclusion:** The hypothesis is supported. Perceived temperature is significantly greater than actual air temperature.
+    """)
+
     st.markdown("#### Hypothesis 3: Perceived temperature is a better indicator of climate extremes than air temperature alone")
     with st.echo():
         threshold = df['main.temp'].quantile(0.90)
         df['extreme'] = (df['main.temp'] >= threshold).astype(int)
         corr_temp, p_temp = spearmanr(df['main.temp'], df['extreme'])
         corr_feels, p_feels = spearmanr(df['main.feels_like'], df['extreme'])
+
     st.write("#### Correlation with Extreme Conditions")
     st.write(f"Temp → Corr: {corr_temp: .4f}, p-value: {p_temp: .6f}")
     st.write(f"Feels Like → Corr: {corr_feels: .4f}, p-value: {p_feels: .6f}")
+
     if abs(corr_feels) > abs(corr_temp):
         st.write("**Conclusion:** `feels_like` is a better indicator of climate extremes.")
     else:
         st.write("**Conclusion:** `temp` is a better indicator of climate extremes.")
+
+    st.markdown(f"""
+    The results show that perceived temperature has a stronger correlation with extreme heat conditions 
+    compared to actual temperature alone. While actual temperature is associated with climate extremes, 
+    feels-like temperature captures additional atmospheric effects such as humidity, making it a stronger 
+    predictor of dangerous heat conditions.
+
+    Since the feels-like correlation ({corr_feels:.4f}) is substantially higher than the actual temperature 
+    correlation ({corr_temp:.4f}), perceived temperature provides a more accurate representation of human heat stress.
+
+    **Conclusion:** The hypothesis is supported. Feels-like temperature is a better indicator of climate extremes.
+    """)
+
     st.markdown("#### Hypothesis 4: Heat stress severity differs significantly across cities due to varying climate action")
     with st.echo():
         groups = [g['main.feels_like'].values for _, g in df.groupby('city_name')]
         stat, p = kruskal(*groups)
+
     st.write(f"p-value: {p: .4f}")
+
+    st.markdown(f"""
+    The Kruskal-Wallis test evaluates whether perceived temperature distributions differ significantly across cities. 
+    The extremely small p-value indicates strong statistical evidence that at least one city experiences heat stress 
+    levels that are significantly different from the others.
+
+    These variations may be influenced by differences in humidity, urban density, geography, and local climate patterns.
+
+    **Conclusion:** The hypothesis is supported. Heat stress severity differs significantly across cities.
+    """)
