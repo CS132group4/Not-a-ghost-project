@@ -329,8 +329,7 @@ def main():
 
     Since the feels-like correlation ({corr_feels:.4f}) is substantially higher than the actual temperature 
     correlation ({corr_temp:.4f}), perceived temperature provides a more accurate representation of human heat stress.
-
-    **Conclusion:** The hypothesis is supported. Feels-like temperature is a better indicator of climate extremes.
+    The hypothesis is supported. Feels-like temperature is a better indicator of climate extremes.
     """)
 
     st.markdown("#### Hypothesis 4: Heat stress severity differs significantly across cities due to varying climate action")
