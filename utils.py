@@ -2,8 +2,7 @@ import pandas as pd
 import streamlit as st
 
 @st.cache_data
-def load_data():
-    df = pd.read_csv("Datasets/filtered_weather_data.csv")
+def preprocess_weather_data(df):
     df = df.dropna()
     df['main.temp'] = pd.to_numeric(df['main.temp'])
     df['main.feels_like'] = pd.to_numeric(df['main.feels_like'])
@@ -14,4 +13,15 @@ def load_data():
     df['extreme_heat'] = df['main.feels_like'] > 38
     return df
 
+@st.cache_data
+def load_data():
+    df = pd.read_csv("Datasets/filtered_weather_data.csv")
+    return preprocess_weather_data(df)
+
+@st.cache_data
+def load_january_data():
+    january_df = pd.read_csv("Datasets/filtered_weather_data_jan.csv")
+    return preprocess_weather_data(january_df)
+
 df = load_data()
+january_df = load_january_data()

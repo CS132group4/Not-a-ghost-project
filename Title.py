@@ -3,6 +3,7 @@ import base64
 import sections.asking_the_questions as q
 import sections.data_collection as d
 import sections.exploratory_data_analysis as e
+import sections.machine_learning_models as m
 import sections.about_us as a
 import sections.overview as o
 
@@ -136,8 +137,8 @@ header[data-testid="stHeader"] {{
 """, unsafe_allow_html=True)
 
 
-tab0, tab1, tab2, tab3, tab4 = st.tabs([
-    "Overview", "Questions", "Collection", "Exploration", "Team"
+tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "Overview", "Questions", "Collection", "Exploration", "Machine Learning", "Team"
 ])
 
 with tab0:
@@ -149,4 +150,6 @@ with tab2:
 with tab3:
     e.main()
 with tab4:
+    m.main()
+with tab5:
     a.main()
