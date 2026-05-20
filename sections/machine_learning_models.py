@@ -7,6 +7,7 @@ import pandas as pd
 from prophet import Prophet
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_samples, silhouette_score
+from sklearn.preprocessing import StandardScaler
 
 
 @st.cache_data
@@ -62,8 +63,14 @@ def main():
     january_df = load_january_data()
 
     st.markdown("## Machine Learning Models")
-
-    st.write("### Felt Temperature Predictor")
+    st.markdown("Similar to the data in previous sections, these models are trained on " \
+    "October to December data, which in the Philippines is a rather cool season. Hence, " \
+    "these models learned patterns from a relatively mild period and not the months with" \
+    " the highest mean temperatures. These prototypes demonstrate that the perceived " \
+    "temperatures follow daily patterns and that cities can be clustered into distinct " \
+    "heat stress profiles. Extending the dataset to cover a year would significantly " \
+    "improve the model's utility for real-world heat advisory applications in the Philippines")
+    st.write("### Perceived Temperature Predictor")
     city = st.selectbox("Select a city", sorted(df['city_name'].unique()))
     prophet_df = df[df['city_name'] == city][['datetime', 'main.feels_like']].rename(columns={'datetime': 'ds', 'main.feels_like': 'y'})
     prophet_df['ds'] = pd.to_datetime(prophet_df['ds']).dt.tz_localize(None)
@@ -121,9 +128,8 @@ def main():
     )
     ax.set_title(f"Forecast vs Actual - {city}")
     ax.legend()
-    st.pyplot(fig)
-    plt.close(fig)
-    st.dataframe(comparison[['ds', 'actual', 'yhat', 'yhat_lower', 'yhat_upper']])
+    st.pyplot(fig, clear_figure=True)
+
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
@@ -141,17 +147,26 @@ def main():
         f"{comparison['mae'].max():.2f}°C"
     )
 
+    st.dataframe(comparison[['ds', 'actual', 'yhat', 'yhat_lower', 'yhat_upper']])
+    
+    st.markdown("These predictions were made with the use of Prophet, a time series forecasting library developed by Meta. " \
+    "Evaluated against actual January data, it demonstrates that daily perceived weather is predictable, helping normal " \
+    "Filipino citizens see what time the perceived temperature typically peaks during the month of January. This helps " \
+    "people know what temperature to expect in each of these cities and prepare accordingly.")
+
     st.write("### K-Means Clustering of Cities")
     city_agg = build_city_agg(df)
 
     features = ['mean_temp', 'mean_feels_like', 'mean_humidity', 'pct_extreme', 'humidity_gap']
     k_means_df= city_agg[features]
+    scaler = StandardScaler()
+    k_means_scaled = scaler.fit_transform(k_means_df)
 
     #k_means_df = k_means_df.sample(5000, random_state=10)
 
     
     with st.spinner("Computing silhouette scores..."):
-        n_numbers, avg_scores = compute_silhouette_scores(k_means_df)
+        n_numbers, avg_scores = compute_silhouette_scores(k_means_scaled)
     fig, ax = plt.subplots(figsize=(10,6))
     ax.plot(n_numbers, avg_scores, marker='o', linestyle='-', color='b')
     ax.set_title("Average Silhouette Scores for Different Cluster Counts")
@@ -159,12 +174,25 @@ def main():
     ax.set_ylabel("Average Silhouette Score")
     ax.grid(True)
     st.pyplot(fig)
+    
 
-    kmeans = KMeans(n_clusters = 9, random_state=10, n_init='auto')
-    city_agg['Cluster']= kmeans.fit_predict(k_means_df)
+    kmeans = KMeans(n_clusters = 3, random_state=10, n_init='auto')
+    city_agg['Cluster']= kmeans.fit_predict(k_means_scaled)
 
     st.write("#### Mean values per cluster")
     st.dataframe(city_agg.groupby('Cluster')[features].mean())
     
+    st.markdown("From what we can see among the 3 clusters, cluster 1 is the highest heat stress" \
+    " group, with the highest mean actual and perceived temperature and frequency of extreme heat events. " \
+    "Meanwhile, cluster 2 is the coolest group, with zero recorded extreme heat events and the lowest" \
+    " mean actual and perceived temperature. Finaly, cluster 0 is the middle ground with moderate actual " \
+    "and perceived heat and humidity.")
+
     st.write("#### Cities per cluster")
     st.dataframe(city_agg[['city_name', 'Cluster'] + features].sort_values('Cluster'))
+    st.markdown("This list shows which cities belong to which cluster, helping ordinary Filipinos know " \
+    "what to expect when visiting one of these cities, and help them prepare accordingly. This is perfect " \
+    "for helping people plan outings, trips, and events during the last quarter of the year.")
+
+
+

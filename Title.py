@@ -4,6 +4,7 @@ import sections.asking_the_questions as q
 import sections.data_collection as d
 import sections.exploratory_data_analysis as e
 import sections.machine_learning_models as m
+import sections.discussion_conclusion as c
 import sections.about_us as a
 import sections.overview as o
 
@@ -137,8 +138,8 @@ header[data-testid="stHeader"] {{
 """, unsafe_allow_html=True)
 
 
-tab0, tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Overview", "Questions", "Collection", "Exploration", "Machine Learning", "Team"
+tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "Overview", "Questions", "Collection", "Exploration", "Machine Learning", "Discussion and Concludion", "Team"
 ])
 
 with tab0:
@@ -152,4 +153,6 @@ with tab3:
 with tab4:
     m.main()
 with tab5:
+    c.main()
+with tab6:
     a.main()

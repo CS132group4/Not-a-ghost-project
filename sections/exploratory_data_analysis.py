@@ -132,7 +132,11 @@ def main():
             hue='main.feels_like',
             ax=ax
         )
-        plt.title("Temperature and Humidity vs Heat Stress")
+        ax.set_title("Temperature and Humidity vs Heat Stress")
+        ax.set_xlabel("Actual Temperature")
+        ax.set_ylabel("Humidity")
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles, labels, title="Perceived Temperature")
         st.pyplot(fig)
 
         st.markdown("""
@@ -151,8 +155,10 @@ def main():
         st.markdown("#### RQ4: Heat Stress Across Cities")
         fig, ax = plt.subplots(figsize=(6, 3))
         sns.boxplot(data=df, x='city_name', y='main.feels_like', ax=ax)
-        plt.xticks(rotation=90)
-        plt.title("Heat Stress Across Cities")
+        ax.tick_params(axis="x", rotation=90)
+        ax.set_title("Heat Stress Across Cities")
+        ax.set_xlabel("City Name")
+        ax.set_ylabel("Perceived Temperature")
         st.pyplot(fig)
 
         st.markdown("""
