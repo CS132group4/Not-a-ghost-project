@@ -139,7 +139,7 @@ header[data-testid="stHeader"] {{
 
 
 tab0, tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "Overview", "Questions", "Collection", "Exploration", "Machine Learning", "Discussion and Concludion", "Team"
+    "Overview", "Questions", "Collection", "Exploration", "Machine Learning", "Discussion and Conclusion", "Team"
 ])
 
 with tab0:
